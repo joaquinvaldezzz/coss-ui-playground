@@ -3,14 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "rsbuild dev --port 3000",
-    "generate-routes": "rsbuild build",
     "build": "rsbuild build",
-    "start": "srvx --prod -s ../client dist/server/index.js",
-    "preview": "rsbuild preview",
-    "lint": "eslint",
+    "check": "prettier --check .",
+    "dev": "rsbuild dev --port 3000",
     "format": "prettier --write . && eslint --fix",
-    "check": "prettier --check ."
+    "generate-routes": "rsbuild build",
+    "lint": "eslint",
+    "preview": "rsbuild preview",
+    "start": "srvx --prod -s ../client dist/server/index.js"
   },
   "dependencies": {
     "@tanstack/react-devtools": "0.10.13",
@@ -23,6 +23,8 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "@prettier/plugin-oxc": "^0.2.3",
     "@rsbuild/core": "^2.1.13",
     "@rsbuild/plugin-react": "^2.1.0",
     "@rsbuild/plugin-tailwindcss": "^2.0.3",
@@ -32,6 +34,8 @@
     "@types/react-dom": "^19.2.0",
     "eslint": "^9.20.0",
     "prettier": "^3.9.10",
+    "prettier-plugin-jsdoc": "^1.8.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^6.0.2"
   }
 }
