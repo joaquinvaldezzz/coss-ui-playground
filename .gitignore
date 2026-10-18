@@ -1,0 +1,14 @@
+*.local
+.DS_Store
+.env
+.nitro
+.output
+.tanstack
+.vinxi
+.wrangler
+__unconfig*
+dist
+dist-ssr
+node_modules
+src/routeTree.gen.ts
+todos.json
