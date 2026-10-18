@@ -2,9 +2,6 @@
   "name": "coss-ui-playground",
   "private": true,
   "type": "module",
-  "imports": {
-    "#/*": "./src/*"
-  },
   "scripts": {
     "dev": "rsbuild dev --port 3000",
     "generate-routes": "rsbuild build",
@@ -36,6 +33,5 @@
     "eslint": "^9.20.0",
     "prettier": "^3.8.1",
     "typescript": "^6.0.2"
-  },
-  "pnpm": {}
+  }
 }
