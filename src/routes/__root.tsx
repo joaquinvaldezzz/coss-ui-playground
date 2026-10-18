@@ -4,6 +4,10 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import appCss from "../styles.css?url";
 
+import "@calcom/cal-sans-ui/geo.css";
+import "@calcom/cal-sans-ui/text.css";
+import "@calcom/cal-sans-ui/ui.css";
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
