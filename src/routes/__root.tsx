@@ -34,8 +34,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="min-w-80 antialiased">
-        {children}
+      <body className="relative min-w-80 bg-background text-foreground antialiased">
+        <div className="relative isolate flex min-h-svh flex-col">{children}</div>
         <TanStackDevtools
           config={{
             position: "bottom-right",
