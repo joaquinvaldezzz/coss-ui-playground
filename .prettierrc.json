@@ -5,7 +5,8 @@
     "@ianvs/prettier-plugin-sort-imports",
     "prettier-plugin-jsdoc",
     "prettier-plugin-tailwindcss"
-  ],"importOrder": [
+  ],
+  "importOrder": [
     "<BUILTIN_MODULES>",
     "^(react/(.*)$)|^(react$)",
     "^(@tanstack/(.*)$)|^(@tanstack$)",
@@ -26,6 +27,6 @@
     "^[./]"
   ],
   "tailwindAttributes": ["classDialog", "tw"],
-  "tailwindStylesheet": "./src/styles/main.css",
+  "tailwindStylesheet": "src/styles.css",
   "tailwindFunctions": ["cva", "tv"]
 }
