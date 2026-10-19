@@ -30,5 +30,5 @@
   ],
   "tailwindAttributes": ["classDialog", "tw"],
   "tailwindStylesheet": "src/styles.css",
-  "tailwindFunctions": ["cva", "tv"]
+  "tailwindFunctions": ["cn", "cva"]
 }

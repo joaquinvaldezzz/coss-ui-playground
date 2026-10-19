@@ -297,7 +297,7 @@ export function DrawerFooter({
       variant === "default" &&
         "border-t bg-muted/72 pt-4 pb-[calc(env(safe-area-inset-bottom,0px)+(--spacing(4)))]",
       variant === "bare" &&
-        "in-[[data-slot=drawer-popup]:has([data-slot=drawer-panel])]:pt-3 pt-4 pb-[calc(env(safe-area-inset-bottom,0px)+(--spacing(6)))]",
+        "pt-4 pb-[calc(env(safe-area-inset-bottom,0px)+(--spacing(6)))] in-[[data-slot=drawer-popup]:has([data-slot=drawer-panel])]:pt-3",
       className,
     ),
     "data-slot": "drawer-footer",
@@ -350,7 +350,7 @@ export function DrawerPanel({
 }): React.ReactElement {
   const defaultProps = {
     className: cn(
-      "p-6 in-[[data-slot=drawer-popup]:has([data-slot=drawer-header])]:pt-1 in-[[data-slot=drawer-popup]:has([data-slot=drawer-footer]:not(.border-t))]:pb-1",
+      "p-6 in-[[data-slot=drawer-popup]:has([data-slot=drawer-footer]:not(.border-t))]:pb-1 in-[[data-slot=drawer-popup]:has([data-slot=drawer-header])]:pt-1",
       !allowSelection && "cursor-default",
       className,
     ),
@@ -407,7 +407,7 @@ export function DrawerMenuItem({
 }): React.ReactElement {
   const defaultProps = {
     className: cn(
-      "flex min-h-9 w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-64 data-[variant=destructive]:text-destructive-foreground sm:min-h-8 sm:text-sm [&>svg:not([class*='opacity-'])]:opacity-80 [&>svg:not([class*='size-'])]:size-4.5 sm:[&>svg:not([class*='size-'])]:size-4 [&>svg]:pointer-events-none [&>svg]:-mx-0.5 [&>svg]:shrink-0",
+      "flex min-h-9 w-full cursor-default items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none select-none hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-64 data-[variant=destructive]:text-destructive-foreground sm:min-h-8 sm:text-sm [&>svg]:pointer-events-none [&>svg]:-mx-0.5 [&>svg]:shrink-0 [&>svg:not([class*='opacity-'])]:opacity-80 [&>svg:not([class*='size-'])]:size-4.5 sm:[&>svg:not([class*='size-'])]:size-4",
       className,
     ),
     "data-slot": "drawer-menu-item",
@@ -463,7 +463,7 @@ export function DrawerMenuGroupLabel({
   ...props
 }: useRender.ComponentProps<"div">): React.ReactElement {
   const defaultProps = {
-    className: cn("px-2 py-1.5 font-medium text-muted-foreground text-xs", className),
+    className: cn("px-2 py-1.5 text-xs font-medium text-muted-foreground", className),
     "data-slot": "drawer-menu-group-label",
   };
 

@@ -152,7 +152,7 @@ export function SheetFooter({
       "flex flex-col-reverse gap-2 px-6 sm:flex-row sm:justify-end",
       variant === "default" && "border-t bg-muted/72 py-4",
       variant === "bare" &&
-        "in-[[data-slot=sheet-popup]:has([data-slot=sheet-panel])]:pt-3 pt-4 pb-6",
+        "pt-4 pb-6 in-[[data-slot=sheet-popup]:has([data-slot=sheet-panel])]:pt-3",
       className,
     ),
     "data-slot": "sheet-footer",
@@ -201,7 +201,7 @@ export function SheetPanel({
 }): React.ReactElement {
   const defaultProps = {
     className: cn(
-      "p-6 in-[[data-slot=sheet-popup]:has([data-slot=sheet-header])]:pt-1 in-[[data-slot=sheet-popup]:has([data-slot=sheet-footer]:not(.border-t))]:pb-1",
+      "p-6 in-[[data-slot=sheet-popup]:has([data-slot=sheet-footer]:not(.border-t))]:pb-1 in-[[data-slot=sheet-popup]:has([data-slot=sheet-header])]:pt-1",
       className,
     ),
     "data-slot": "sheet-panel",

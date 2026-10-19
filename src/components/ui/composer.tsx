@@ -79,8 +79,8 @@ function ComposerFrame({
       </Fragment>
     ),
     className: cn(
-      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-(--composer-radius) border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-radius:var(--radius-xl)] [--composer-max-rows:4] [--composer-padding:--spacing(2)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--composer-radius)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]",
-      "data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(2)-1px)] data-[layout=adaptive]:not-data-multiline:pt-[calc(var(--composer-padding)-1px)]",
+      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-(--composer-radius) border border-input bg-background pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] [--composer-radius:var(--radius-xl)] not-dark:bg-clip-padding before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--composer-radius)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-aria-invalid:border-destructive/36 has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:border-ring has-[[data-slot=composer-input]:focus-visible]:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none md:[--composer-max-rows:8] dark:bg-input/32 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] dark:has-aria-invalid:ring-destructive/24 dark:aria-invalid:ring-destructive/24",
+      "data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(2)-1px)] data-[layout=adaptive]:not-data-multiline:pt-[calc(var(--composer-padding)-1px)] data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto]",
       className,
     ),
   };
@@ -207,7 +207,7 @@ export function ComposerInput({
     "data-placeholder": placeholder,
     "aria-placeholder": editor ? placeholder : undefined,
     className: cn(
-      "field-sizing-content wrap-anywhere relative block min-h-[calc(var(--composer-min-rows,1)*1lh+(--spacing(2)))] w-full min-w-0 resize-none whitespace-pre-wrap border-0 bg-transparent in-[[data-layout=adaptive]:not([data-multiline])]:px-1 px-[calc(--spacing(3)-1px)] py-1 outline-none placeholder:text-muted-foreground/72 data-empty:before:pointer-events-none data-empty:before:absolute data-empty:before:text-muted-foreground/72 data-empty:before:content-[attr(data-placeholder)] md:in-data-[layout=adaptive]:min-h-[calc(var(--composer-min-rows,1)*1lh+(--spacing(2)))] md:min-h-[calc(var(--composer-min-rows,2)*1lh+(--spacing(2)))]",
+      "relative block field-sizing-content min-h-[calc(var(--composer-min-rows,1)*1lh+(--spacing(2)))] w-full min-w-0 resize-none border-0 bg-transparent px-[calc(--spacing(3)-1px)] py-1 wrap-anywhere whitespace-pre-wrap outline-none placeholder:text-muted-foreground/72 in-[[data-layout=adaptive]:not([data-multiline])]:px-1 data-empty:before:pointer-events-none data-empty:before:absolute data-empty:before:text-muted-foreground/72 data-empty:before:content-[attr(data-placeholder)] md:min-h-[calc(var(--composer-min-rows,2)*1lh+(--spacing(2)))] md:in-data-[layout=adaptive]:min-h-[calc(var(--composer-min-rows,1)*1lh+(--spacing(2)))]",
       className,
     ),
   };
@@ -356,7 +356,7 @@ export function ComposerItem({
     "data-slot": "composer-item",
     disabled,
     className: cn(
-      "flex min-h-8 w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-start text-base outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm",
+      "flex min-h-8 w-full cursor-default items-center gap-2 rounded-sm px-2 py-1 text-start text-base outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-64 data-highlighted:bg-accent data-highlighted:text-accent-foreground sm:min-h-7 sm:text-sm",
       className,
     ),
   };
@@ -379,7 +379,7 @@ export function ComposerStatus({
     role: "status",
     "data-slot": "composer-status",
     className: cn(
-      "px-3 py-2 font-medium text-muted-foreground text-xs empty:m-0 empty:p-0",
+      "px-3 py-2 text-xs font-medium text-muted-foreground empty:m-0 empty:p-0",
       className,
     ),
   };
