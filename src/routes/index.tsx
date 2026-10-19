@@ -1,14 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { Fieldset, FieldsetLegend } from "@/components/ui/fieldset";
+import { Input } from "@/components/ui/input";
+
 export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
   return (
     <div className="p-8">
-      <h1 className="text-4xl font-bold">Welcome to TanStack Start</h1>
-      <p className="mt-4 text-lg">
-        Edit <code>src/routes/index.tsx</code> to get started.
-      </p>
+      <Fieldset className="flex w-full flex-col gap-6">
+        <FieldsetLegend>Billing Details</FieldsetLegend>
+        <Field>
+          <FieldLabel>Company</FieldLabel>
+          <Input placeholder="Enter company name" type="text" />
+          <FieldDescription>The name that will appear on invoices.</FieldDescription>
+        </Field>
+        <Field>
+          <FieldLabel>Tax ID</FieldLabel>
+          <Input placeholder="Enter tax identification number" type="text" />
+          <FieldDescription>Your business tax identification number.</FieldDescription>
+        </Field>
+      </Fieldset>
     </div>
   );
 }
