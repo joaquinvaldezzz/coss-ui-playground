@@ -1,4 +1,6 @@
-Welcome to your new TanStack Start app!
+# coss-ui-playground
+
+A TanStack Start app using [COSS UI](https://coss.com/ui) components.
 
 # Getting Started
 
@@ -25,19 +27,21 @@ This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
 
 If you prefer not to use Tailwind CSS:
 
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Remove `@tailwindcss/vite` and `tailwindcss` from `package.json`
+1. Replace the Tailwind import in `src/styles.css` with your own styles
+2. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
+3. Remove `@tailwindcss/vite` and `tailwindcss` from `package.json`
 
 ## Linting & Formatting
 
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
+This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. ESLint is configured in `eslint.config.mjs` with `eslint-config-airbnb-extended`, `@shadcn/lint`, and `eslint-plugin-prettier`. Prettier is configured in `.prettierrc.json`. The following scripts are available:
 
 ```bash
-bun --bun run lint
-bun --bun run format
-bun --bun run check
+bun --bun run lint       # eslint --cache
+bun --bun run lint:fix   # eslint --fix
+bun --bun run format     # prettier --write .
+bun --bun run check      # prettier --check .
+bun --bun run generate-routes  # regenerate src/routeTree.gen.ts
+bun --bun run preview    # preview the production build locally
 ```
 
 ## Deploy to Vercel
@@ -45,7 +49,7 @@ bun --bun run check
 1. Push this repo to GitHub, GitLab, or Bitbucket
 2. In Vercel, choose **Add New > Project** and import the repo
 3. Keep the detected TanStack Start framework settings
-4. Add production values from `.env.example` under **Settings > Environment Variables**
+4. Optionally set `VITE_SITE_URL` under **Settings > Environment Variables** (used for canonical/SEO metadata; defaults to `https://coss-ui-playground.vercel.app`)
 5. Deploy
 
 Vercel runs the build script and deploys Nitro's output as Vercel Functions and
