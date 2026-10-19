@@ -12,6 +12,8 @@
     "^(@tanstack/(.*)$)|^(@tanstack$)",
     "<THIRD_PARTY_MODULES>",
     "",
+    "<TYPES>^(react/(.*)$)|^(react$)",
+    "<TYPES>^(@tanstack/(.*)$)|^(@tanstack$)",
     "<TYPES>",
     "<TYPES>^@/types/(.*)$",
     "^@/config/(.*)$",

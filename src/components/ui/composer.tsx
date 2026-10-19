@@ -6,12 +6,12 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
 import { createPortal } from "react-dom";
 
+import type { ComponentProps, MouseEvent, PointerEvent, ReactElement, ReactNode } from "react";
 import type {
   ComposerEditorOptions,
   ComposerItemValue,
   ComposerTokenPart,
 } from "@/lib/composer-editor";
-import type { ComponentProps, MouseEvent, PointerEvent, ReactElement, ReactNode } from "react";
 import {
   ComposerEditorProvider,
   focusComposerInput,

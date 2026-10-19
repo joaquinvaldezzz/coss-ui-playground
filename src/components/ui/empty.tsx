@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
-import type { VariantProps } from "class-variance-authority";
 import type React from "react";
+import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const emptyMediaVariants = cva(

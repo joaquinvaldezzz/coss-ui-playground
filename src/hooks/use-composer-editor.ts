@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
 
+import type { ComponentProps, FormEvent, KeyboardEvent, RefObject } from "react";
 import type {
   ActiveQuery,
   ComposerItemValue,
@@ -14,7 +15,6 @@ import type {
   ComposerTrigger,
   ComposerValue,
 } from "@/lib/composer-document";
-import type { ComponentProps, FormEvent, KeyboardEvent, RefObject } from "react";
 import { COMPOSER_CLIPBOARD_TYPE, parseComposerClipboard } from "@/lib/composer-clipboard";
 import {
   currentQuery,

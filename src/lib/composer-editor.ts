@@ -14,13 +14,6 @@ import {
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
 import type {
-  ComposerEditorController,
-  ComposerItemValue,
-  ComposerQuery,
-  ComposerValue,
-  UseComposerEditorOptions,
-} from "@/hooks/use-composer-editor";
-import type {
   ComponentProps,
   Context,
   KeyboardEvent,
@@ -29,6 +22,13 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
+import type {
+  ComposerEditorController,
+  ComposerItemValue,
+  ComposerQuery,
+  ComposerValue,
+  UseComposerEditorOptions,
+} from "@/hooks/use-composer-editor";
 import { useComposerEditor } from "@/hooks/use-composer-editor";
 
 type ComposerEditorOptions = Omit<UseComposerEditorOptions, "value" | "onValueChange"> & {
