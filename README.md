@@ -27,8 +27,8 @@ If you prefer not to use Tailwind CSS:
 
 1. Remove the demo pages in `src/routes/demo/`
 2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `pluginTailwindcss()` from the plugins array in `rsbuild.config.ts`
-4. Remove `@rsbuild/plugin-tailwindcss` and `tailwindcss` from `package.json`
+3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
+4. Remove `@tailwindcss/vite` and `tailwindcss` from `package.json`
 
 ## Linting & Formatting
 
@@ -39,6 +39,20 @@ bun --bun run lint
 bun --bun run format
 bun --bun run check
 ```
+
+## Deploy to Vercel
+
+1. Push this repo to GitHub, GitLab, or Bitbucket
+2. In Vercel, choose **Add New > Project** and import the repo
+3. Keep the detected TanStack Start framework settings
+4. Add production values from `.env.example` under **Settings > Environment Variables**
+5. Deploy
+
+Vercel runs the build script and deploys Nitro's output as Vercel Functions and
+static assets. The included `vercel.json` makes framework detection explicit.
+
+Variables prefixed with `VITE_` are included in the browser bundle. Keep secrets
+unprefixed so they remain server-only.
 
 ## Routing
 

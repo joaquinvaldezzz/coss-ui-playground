@@ -1,5 +1,5 @@
 {
-  "bundler": "rsbuild",
+  "bundler": "vite",
   "projectName": "coss-ui-playground",
   "mode": "file-router",
   "typescript": true,
@@ -14,5 +14,5 @@
   "intent": true,
   "version": 1,
   "framework": "react",
-  "chosenAddOns": ["eslint"]
+  "chosenAddOns": ["eslint", "vercel"]
 }
