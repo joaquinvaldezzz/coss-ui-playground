@@ -6,10 +6,10 @@ fully before starting, honor its STOP conditions, and update your row when done.
 
 ## Execution order & status
 
-| Plan | Title                                                       | Priority | Effort | Depends on | Status                                                                                                         |
-| ---- | ----------------------------------------------------------- | -------- | ------ | ---------- | -------------------------------------------------------------------------------------------------------------- |
-| 001  | Remove the unused `@tanstack/eslint-config` devDependency   | P3       | S      | —          | DONE (verified by reviewer; worktree `advisor-001-remove-unused-eslint-config`, commit `c310783` — not merged) |
-| 002  | Correct the README's linting, deploy, and Tailwind sections | P3       | S      | 001        | TODO                                                                                                           |
+| Plan | Title                                                       | Priority | Effort | Depends on | Status                                                       |
+| ---- | ----------------------------------------------------------- | -------- | ------ | ---------- | ------------------------------------------------------------ |
+| 001  | Remove the unused `@tanstack/eslint-config` devDependency   | P3       | S      | —          | DONE (merged into `main` at `f278dba`; change was `c310783`) |
+| 002  | Correct the README's linting, deploy, and Tailwind sections | P3       | S      | 001        | DONE (merged into `main` at `3b0714d`; change was `3b0714d`) |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (with one-line reason) | REJECTED (with one-line rationale)
 
@@ -18,10 +18,10 @@ Status values: TODO | IN PROGRESS | DONE | BLOCKED (with one-line reason) | REJE
 - 002 requires 001: the README's ESLint description is rewritten to name the
   real config stack (`eslint-config-airbnb-extended`, `@shadcn/lint`,
   `eslint-plugin-prettier`) and to drop the `@tanstack/eslint-config` claim.
-  That wording is only correct once 001 has removed the package. **001 is DONE
-  (pending merge), so 002 is unblocked** — though note 002 edits `README.md` in
-  the main tree, while 001's change currently lives on an unmerged worktree
-  branch.
+  That wording is only correct once 001 has removed the package. **Both 001 and
+  002 are DONE and merged into `main`.** Nothing remains blocked or executable;
+  the worktree branches (`advisor/001-…`, `advisor/002-…`) are now redundant and
+  can be removed.
 
 ## Scope of this run
 
