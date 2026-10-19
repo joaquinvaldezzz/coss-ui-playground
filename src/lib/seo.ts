@@ -6,10 +6,7 @@ export type HeadMeta = DetailedHTMLProps<MetaHTMLAttributes<HTMLMetaElement>, HT
 /** Link tag shape accepted by a route's `head` callback. */
 export type HeadLink = DetailedHTMLProps<LinkHTMLAttributes<HTMLLinkElement>, HTMLLinkElement>;
 
-/**
- * Canonical origin used to build absolute URLs for `og:url`, `twitter:url`
- * and the canonical link. Override it per environment with `VITE_SITE_URL`.
- */
+// Origin for absolute og:url and canonical links. Override with VITE_SITE_URL.
 const SITE_URL = (import.meta.env.VITE_SITE_URL ?? "https://coss-ui-playground.vercel.app").replace(
   /\/+$/,
   "",
@@ -33,7 +30,6 @@ function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
-/** Builds the full list of SEO `meta` tags for a page. */
 export function seoMeta({
   title,
   description,
@@ -60,18 +56,12 @@ export function seoMeta({
 }
 
 /**
- * Returns a route `head` callback, so a page only declares its title and
- * description:
+ * Returns a route `head` callback. `og:url` and the canonical link come from
+ * the matched pathname unless `path` is set explicitly.
  *
  * ```tsx
- * export const Route = createFileRoute("/about")({
- *   component: About,
- *   head: seo({ title: "About", description: "..." }),
- * });
+ * head: seo({ title: "About", description: "..." })
  * ```
- *
- * `og:url` and the canonical link are derived from the matched pathname
- * automatically unless `path` is given explicitly.
  */
 export function seo(options: SeoOptions) {
   return ({ match }: { match: { pathname: string } }) => {
