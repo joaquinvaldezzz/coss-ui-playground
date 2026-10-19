@@ -40,14 +40,14 @@ function parseQuery(query: BreakpointQuery | MediaQueryInput | (string & {})): s
   if (query.startsWith("(")) return query;
 
   const parts: string[] = [];
-  for (const segment of query.split(":")) {
+  query.split(":").forEach((segment) => {
     if (segment.startsWith("max-")) {
       const bp = segment.slice(4);
       if (bp in BREAKPOINTS) parts.push(resolveMax(bp as Breakpoint));
     } else if (segment in BREAKPOINTS) {
       parts.push(resolveMin(segment as Breakpoint));
     }
-  }
+  });
 
   return parts.length > 0 ? parts.join(" and ") : query;
 }
@@ -56,12 +56,12 @@ function getServerSnapshot(): boolean {
   return false;
 }
 
-export type MediaQueryInput = {
+export interface MediaQueryInput {
   min?: Breakpoint | number;
   max?: Breakpoint | number;
   /** Touch-like input (finger). Use "fine" for mouse/trackpad. */
   pointer?: "coarse" | "fine";
-};
+}
 
 export function useMediaQuery(query: BreakpointQuery | MediaQueryInput | (string & {})): boolean {
   const mediaQuery = parseQuery(query);

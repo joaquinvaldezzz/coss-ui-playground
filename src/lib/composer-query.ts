@@ -5,14 +5,14 @@ export function getComposerQuery(
 ): { character: string; text: string; start: number; end: number } | null {
   let start = -1;
   let character = "";
-  for (const trigger of triggers) {
-    if (!trigger || trigger.length > caret) continue;
+  triggers.forEach((trigger) => {
+    if (!trigger || trigger.length > caret) return;
     const index = text.lastIndexOf(trigger, caret - trigger.length);
     if (index > start) {
       start = index;
       character = trigger;
     }
-  }
+  });
   if (start < 0 || (start > 0 && !/\s/u.test(text.charAt(start - 1)))) return null;
 
   const beforeCaret = text.slice(start + character.length, caret);

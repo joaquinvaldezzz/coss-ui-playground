@@ -1,8 +1,9 @@
 "use client";
 
-import * as React from "react";
+import { createContext, useContext } from "react";
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 
+import type { Context, ReactElement } from "react";
 import type { SegmentedControlSize } from "@/lib/segmented-control";
 import {
   segmentedControlItemLayoutClassName,
@@ -13,9 +14,9 @@ import { cn } from "@/lib/utils";
 type TabsVariant = "default" | "underline";
 type TabsSize = SegmentedControlSize;
 
-const TabsListContext: React.Context<TabsSize> = React.createContext<TabsSize>("default");
+const TabsListContext: Context<TabsSize> = createContext<TabsSize>("default");
 
-export function Tabs({ className, ...props }: TabsPrimitive.Root.Props): React.ReactElement {
+export function Tabs({ className, ...props }: TabsPrimitive.Root.Props): ReactElement {
   return (
     <TabsPrimitive.Root
       className={cn("flex flex-col gap-2 data-[orientation=vertical]:flex-row", className)}
@@ -34,7 +35,7 @@ export function TabsList({
 }: TabsPrimitive.List.Props & {
   size?: TabsSize;
   variant?: TabsVariant;
-}): React.ReactElement {
+}): ReactElement {
   return (
     <TabsPrimitive.List
       className={cn(
@@ -69,8 +70,8 @@ export function TabsTab({
   ...props
 }: TabsPrimitive.Tab.Props & {
   size?: TabsSize;
-}): React.ReactElement {
-  const contextSize: TabsSize = React.useContext(TabsListContext);
+}): ReactElement {
+  const contextSize: TabsSize = useContext(TabsListContext);
   const resolvedSize: TabsSize = size ?? contextSize;
 
   return (
@@ -88,7 +89,7 @@ export function TabsTab({
   );
 }
 
-export function TabsPanel({ className, ...props }: TabsPrimitive.Panel.Props): React.ReactElement {
+export function TabsPanel({ className, ...props }: TabsPrimitive.Panel.Props): ReactElement {
   return (
     <TabsPrimitive.Panel
       className={cn("flex-1 outline-none", className)}

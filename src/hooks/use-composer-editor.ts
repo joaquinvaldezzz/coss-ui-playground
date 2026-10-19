@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
 import { Autocomplete as AutocompletePrimitive } from "@base-ui/react/autocomplete";
 
 import type { ComponentProps, FormEvent, KeyboardEvent, RefObject } from "react";
@@ -30,10 +30,10 @@ import {
   writeValue,
 } from "@/lib/composer-document";
 
-type ComposerChangeDetails = {
+interface ComposerChangeDetails {
   reason: "input" | "selection" | "history" | "reset";
-};
-type UseComposerEditorOptions = {
+}
+interface UseComposerEditorOptions {
   value: ComposerValue;
   onValueChange: (value: ComposerValue, details: ComposerChangeDetails) => void;
   onSubmit?: (value: ComposerValue) => void;
@@ -46,9 +46,9 @@ type UseComposerEditorOptions = {
   submitDisabled?: boolean;
   allowEmpty?: boolean;
   submitOnEnter?: "desktop" | "always" | "never";
-};
+}
 
-type ComposerEditorController = {
+interface ComposerEditorController {
   value: ComposerValue;
   inputProps: ComponentProps<"div">;
   formProps: Pick<ComponentProps<"form">, "onSubmit">;
@@ -72,7 +72,10 @@ type ComposerEditorController = {
     onOpenChange: (open: boolean) => void;
     onItemSelect: (item: ComposerItemValue) => void;
   };
-};
+}
+
+export const useComposerFilter: typeof AutocompletePrimitive.useFilter =
+  AutocompletePrimitive.useFilter;
 
 export function useComposerEditor({
   value,
@@ -121,9 +124,18 @@ export function useComposerEditor({
   const ignoreCompositionInput = useRef(false);
   const dismissedQuery = useRef<string | null>(null);
   const queryAction = useRef<() => void>(() => {});
-  const [query, setQuery] = useState<ActiveQuery | null>(null);
+  const [storedQuery, setStoredQuery] = useState<ActiveQuery | null>(null);
   const [tokenHosts, setTokenHosts] = useState<HTMLSpanElement[]>([]);
-  const [, forceReconcile] = useState(0);
+  const [, forceReconcile] = useReducer((revision: number) => revision + 1, 0);
+  // Derive the effective query instead of clearing state in an effect when the
+  // composer becomes disabled or the active trigger disappears.
+  const query =
+    storedQuery &&
+    !disabled &&
+    !readOnly &&
+    triggers.some((item) => item.character === storedQuery.character)
+      ? storedQuery
+      : null;
   const trigger = triggers.find((item) => item.character === query?.character);
   const { contains } = useComposerFilter();
   const options = getFilteredItems(trigger, query, contains);
@@ -142,7 +154,9 @@ export function useComposerEditor({
     !submitDisabled &&
     (allowEmpty || Boolean(getComposerText(value).trim()));
   const onQueryChangeRef = useRef(onQueryChange);
-  onQueryChangeRef.current = onQueryChange;
+  useEffect(() => {
+    onQueryChangeRef.current = onQueryChange;
+  });
   const queryCharacter = query?.character;
   const queryText = query?.text;
   const queryKey = query?.key;
@@ -167,16 +181,8 @@ export function useComposerEditor({
   }, [queryCharacter, queryText, queryKey]);
 
   useEffect(() => {
-    if (
-      query &&
-      (disabled || readOnly || !triggers.some((item) => item.character === query.character))
-    )
-      setQuery(null);
-  }, [disabled, readOnly, query, triggers]);
-
-  useEffect(() => {
     const input = inputElement;
-    if (!input || input instanceof HTMLTextAreaElement) return;
+    if (!input || input instanceof HTMLTextAreaElement) return undefined;
     const beforeInput = (event: InputEvent) => {
       if (event.defaultPrevented) return;
       if (disabled || readOnly || event.inputType.startsWith("format")) {
@@ -210,15 +216,16 @@ export function useComposerEditor({
   }, []);
 
   // Check each commit, including edits the controlled owner rejects without changing value.
+  // The rewrite path must run on every commit, so a dependency list would defeat its purpose.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     const input = inputRef.current;
     if (!input || composing.current) return;
-    const expected: ComposerValue =
-      input instanceof HTMLTextAreaElement
-        ? getComposerText(value)
-          ? [{ type: "text", text: getComposerText(value) }]
-          : []
-        : value;
+    let expected: ComposerValue = value;
+    if (input instanceof HTMLTextAreaElement) {
+      const text = getComposerText(value);
+      expected = text ? [{ type: "text", text }] : [];
+    }
     if (!equalValue(history.current.current.value, expected)) {
       lastSelection.current = null;
       history.current = {
@@ -233,7 +240,7 @@ export function useComposerEditor({
       const selection = readSelection(input);
       writeValue(input, expected);
       restoreSelection(input, selection);
-      setQuery(null);
+      setStoredQuery(null);
       dismissedQuery.current = null;
     }
     syncTokenHosts(input);
@@ -255,18 +262,20 @@ export function useComposerEditor({
       !(input instanceof HTMLTextAreaElement)
         ? currentQuery(input, triggers)
         : null;
-    if (!next || next.key !== dismissedQuery.current) dismissedQuery.current = null;
+    if (next?.key !== dismissedQuery.current) dismissedQuery.current = null;
     const active = next?.key === dismissedQuery.current ? null : next;
-    setQuery((previous) =>
+    setStoredQuery((previous) =>
       previous?.key === active?.key && previous?.node === active?.node ? previous : active,
     );
   };
 
-  queryAction.current = updateQuery;
+  useEffect(() => {
+    queryAction.current = updateQuery;
+  });
 
   const dismissSuggestions = (): void => {
     dismissedQuery.current = query?.key ?? null;
-    setQuery(null);
+    setStoredQuery(null);
   };
 
   const publish = (reason: ComposerChangeDetails["reason"] = "input"): void => {
@@ -299,7 +308,7 @@ export function useComposerEditor({
       pendingInput.current = { type: "", selection: null };
     }
     if (!equalValue(next, value)) onValueChange(next, { reason });
-    forceReconcile((revision) => revision + 1);
+    forceReconcile();
     syncTokenHosts(input);
     dismissedQuery.current = null;
     updateQuery();
@@ -330,13 +339,13 @@ export function useComposerEditor({
       selection?.removeAllRanges();
       selection?.addRange(range);
       publish("selection");
-      setQuery(null);
+      setStoredQuery(null);
       onAction(suggestion, query);
       return;
     }
     insertItem(input, query, suggestion);
     publish("selection");
-    setQuery(null);
+    setStoredQuery(null);
   };
 
   const insertTrigger = (character: string): void => {
@@ -347,7 +356,7 @@ export function useComposerEditor({
       disabled ||
       readOnly ||
       composing.current ||
-      !triggers.some((trigger) => trigger.character === character)
+      !triggers.some((item) => item.character === character)
     )
       return;
     const text = getComposerText(readValue(input));
@@ -374,28 +383,36 @@ export function useComposerEditor({
     lastSelection.current = readSelection(input);
   };
 
-  historyAction.current = (direction) => {
-    const input = inputRef.current;
-    if (!input || input instanceof HTMLTextAreaElement || disabled || readOnly || composing.current)
-      return;
-    const state = history.current;
-    const source = direction === "undo" ? state.past : state.future;
-    const destination = direction === "undo" ? state.future : state.past;
-    const snapshot = source.pop();
-    if (!snapshot) return;
-    destination.push({
-      value: readValue(input),
-      selection: readSelection(input),
-    });
-    state.current = snapshot;
-    state.inputType = "";
-    writeValue(input, snapshot.value);
-    restoreSelection(input, snapshot.selection);
-    onValueChange(snapshot.value, { reason: "history" });
-    forceReconcile((revision) => revision + 1);
-    syncTokenHosts(input);
-    dismissSuggestions();
-  };
+  useEffect(() => {
+    historyAction.current = (direction) => {
+      const input = inputRef.current;
+      if (
+        !input ||
+        input instanceof HTMLTextAreaElement ||
+        disabled ||
+        readOnly ||
+        composing.current
+      )
+        return;
+      const state = history.current;
+      const source = direction === "undo" ? state.past : state.future;
+      const destination = direction === "undo" ? state.future : state.past;
+      const snapshot = source.pop();
+      if (!snapshot) return;
+      destination.push({
+        value: readValue(input),
+        selection: readSelection(input),
+      });
+      state.current = snapshot;
+      state.inputType = "";
+      writeValue(input, snapshot.value);
+      restoreSelection(input, snapshot.selection);
+      onValueChange(snapshot.value, { reason: "history" });
+      forceReconcile();
+      syncTokenHosts(input);
+      dismissSuggestions();
+    };
+  });
 
   const performSubmit = (): void => {
     if (!canSubmit || composing.current) return;
@@ -462,7 +479,7 @@ export function useComposerEditor({
       };
       dismissSuggestions();
       onValueChange(next, { reason: "reset" });
-      forceReconcile((revision) => revision + 1);
+      forceReconcile();
     },
     formProps: {
       onSubmit: (event: FormEvent<HTMLFormElement>) => {
@@ -501,7 +518,7 @@ export function useComposerEditor({
         composing.current = true;
         setIsComposing(true);
         compositionValue.current = value;
-        setQuery(null);
+        setStoredQuery(null);
       },
       onCompositionEnd: () => {
         composing.current = false;
@@ -511,7 +528,7 @@ export function useComposerEditor({
           ignoreCompositionInput.current = false;
         });
         if (equalValue(compositionValue.current, value)) publish();
-        forceReconcile((revision) => revision + 1);
+        forceReconcile();
       },
       onCopy: (event) => {
         if (event.defaultPrevented || event.currentTarget instanceof HTMLTextAreaElement) return;
@@ -582,7 +599,7 @@ export function useComposerEditor({
               !(node instanceof HTMLElement && node.hasAttribute("data-composer-placeholder")),
           );
           const last = nodes.at(-1);
-          for (const node of nodes.reverse()) range.insertNode(node);
+          [...nodes].reverse().forEach((node) => range.insertNode(node));
           if (last) range.setStartAfter(last);
           range.collapse(true);
           selection.removeAllRanges();
@@ -644,8 +661,6 @@ export function useComposerEditor({
   };
 }
 
-export const useComposerFilter: typeof AutocompletePrimitive.useFilter =
-  AutocompletePrimitive.useFilter;
 export {
   type ComposerChangeDetails,
   type ComposerEditorController,

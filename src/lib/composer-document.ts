@@ -16,7 +16,7 @@ type ComposerPart =
 type ComposerValue = readonly ComposerPart[];
 type ComposerTokenPart = Exclude<ComposerPart, { type: "text" }>;
 
-type ComposerItemValue = {
+interface ComposerItemValue {
   id: string;
   label: string;
   disabled?: boolean;
@@ -26,9 +26,9 @@ type ComposerItemValue = {
   kind?: string;
   data?: string;
   text?: string;
-};
+}
 
-type ComposerTrigger = {
+interface ComposerTrigger {
   character: string;
   items: readonly ComposerItemValue[];
   status?: "ready" | "loading" | "error";
@@ -37,9 +37,13 @@ type ComposerTrigger = {
   showEmpty?: boolean;
   maxQueryLength?: number;
   filter?: ((item: ComposerItemValue, query: string) => boolean) | null;
-};
+}
 
-type ComposerQuery = { character: string; text: string; key: string };
+interface ComposerQuery {
+  character: string;
+  text: string;
+  key: string;
+}
 
 const queryNodeIds = new WeakMap<Text, number>();
 let nextQueryNodeId = 0;
@@ -64,12 +68,12 @@ function readValue(root: HTMLElement, ignoreTrailingPlaceholder = true): Compose
   const parts: ComposerPart[] = [];
   function children(parent: HTMLElement): void {
     const nodes = Array.from(parent.childNodes);
-    for (const [index, node] of nodes.entries()) {
+    nodes.forEach((node, index) => {
       if (node instanceof Text) {
         pushText(parts, node.data);
-        continue;
+        return;
       }
-      if (!(node instanceof HTMLElement)) continue;
+      if (!(node instanceof HTMLElement)) return;
       const tokenType = node.dataset.composerToken;
       if (tokenType === "mention" || tokenType === "action") {
         parts.push({
@@ -82,7 +86,7 @@ function readValue(root: HTMLElement, ignoreTrailingPlaceholder = true): Compose
           ...(node.dataset.text !== undefined ? { text: node.dataset.text } : {}),
         });
       } else if (node.tagName === "BR") {
-        if (node.hasAttribute("data-composer-placeholder")) continue;
+        if (node.hasAttribute("data-composer-placeholder")) return;
         // Browsers end empty lines with a placeholder BR, which is not another newline.
         if (!ignoreTrailingPlaceholder || index !== nodes.length - 1) pushText(parts, "\n");
       } else {
@@ -96,7 +100,7 @@ function readValue(root: HTMLElement, ignoreTrailingPlaceholder = true): Compose
             pushText(parts, "\n");
         }
       }
-    }
+    });
   }
   children(root);
   return parts;
@@ -104,10 +108,10 @@ function readValue(root: HTMLElement, ignoreTrailingPlaceholder = true): Compose
 
 function normalizeValue(value: ComposerValue): ComposerValue {
   const parts: ComposerPart[] = [];
-  for (const part of value) {
+  value.forEach((part) => {
     if (part.type === "text") pushText(parts, part.text);
     else parts.push(part);
-  }
+  });
   return parts;
 }
 
@@ -162,14 +166,16 @@ function createToken(part: ComposerTokenPart): HTMLSpanElement {
 
 function writeValue(root: HTMLElement, value: ComposerValue): void {
   if (root instanceof HTMLTextAreaElement) {
+    // Native textarea exposes their content as a mutable `value` property.
+    // eslint-disable-next-line no-param-reassign
     root.value = getComposerText(value);
     return;
   }
   const fragment = document.createDocumentFragment();
-  for (const part of value) {
+  value.forEach((part) => {
     if (part.type !== "text") fragment.append(createToken(part));
     else if (part.text) fragment.append(document.createTextNode(part.text));
-  }
+  });
   if (getComposerText(value).endsWith("\n")) {
     const placeholder = document.createElement("br");
     placeholder.dataset.composerPlaceholder = "";
@@ -266,7 +272,10 @@ function currentQuery(root: HTMLElement, triggers: readonly ComposerTrigger[]): 
     !/\s$/u.test(node.previousSibling.textContent)
   )
     return null;
-  if (!queryNodeIds.has(node)) queryNodeIds.set(node, ++nextQueryNodeId);
+  if (!queryNodeIds.has(node)) {
+    nextQueryNodeId += 1;
+    queryNodeIds.set(node, nextQueryNodeId);
+  }
   return {
     ...query,
     node,
@@ -297,12 +306,10 @@ function hasVisibleItems(
   trigger: ComposerTrigger | undefined,
   options: readonly ComposerItemValue[],
 ): boolean {
-  return Boolean(
-    trigger &&
-    (options.length ||
-      trigger.showEmpty ||
-      trigger.status === "loading" ||
-      trigger.status === "error"),
+  if (!trigger) return false;
+  const showEmpty = trigger.showEmpty ?? false;
+  return (
+    options.length > 0 || showEmpty || trigger.status === "loading" || trigger.status === "error"
   );
 }
 
@@ -342,7 +349,10 @@ function insertItem(
   input.focus({ preventScroll: true });
 }
 
-type ComposerSelection = { anchor: number; focus: number };
+interface ComposerSelection {
+  anchor: number;
+  focus: number;
+}
 
 // Use canonical text offsets so chip labels and their icons do not move the caret.
 function readSelection(input: HTMLElement): ComposerSelection | null {
@@ -390,7 +400,9 @@ function restoreSelection(input: HTMLElement, selection: ComposerSelection | nul
   }
   function point(offset: number): [Node, number] {
     let remaining = offset;
-    for (const [index, node] of Array.from(input.childNodes).entries()) {
+    const nodes = Array.from(input.childNodes);
+    for (let index = 0; index < nodes.length; index += 1) {
+      const node = nodes[index];
       const length =
         node instanceof HTMLElement && node.dataset.composerToken
           ? (node.dataset.text ?? `${node.dataset.trigger ?? ""}${node.dataset.label ?? ""}`).length
@@ -408,10 +420,10 @@ function restoreSelection(input: HTMLElement, selection: ComposerSelection | nul
   window.getSelection()?.setBaseAndExtent(anchor, anchorOffset, focus, focusOffset);
 }
 
-type ComposerSnapshot = {
+interface ComposerSnapshot {
   value: ComposerValue;
   selection: ComposerSelection | null;
-};
+}
 
 export {
   type ActiveQuery,

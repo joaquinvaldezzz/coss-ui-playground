@@ -1,8 +1,9 @@
 "use client";
 
-import * as React from "react";
+import { useMemo } from "react";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 
+import type { ReactElement } from "react";
 import { cn } from "@/lib/utils";
 
 export function Slider({
@@ -14,16 +15,10 @@ export function Slider({
   min = 0,
   max = 100,
   ...props
-}: SliderPrimitive.Root.Props &
-  Pick<SliderPrimitive.Thumb.Props, "getAriaLabel">): React.ReactElement {
-  const _values = React.useMemo(() => {
-    if (value !== undefined) {
-      return Array.isArray(value) ? value : [value];
-    }
-    if (defaultValue !== undefined) {
-      return Array.isArray(defaultValue) ? defaultValue : [defaultValue];
-    }
-    return [min];
+}: SliderPrimitive.Root.Props & Pick<SliderPrimitive.Thumb.Props, "getAriaLabel">): ReactElement {
+  const resolvedValues = useMemo<number[]>(() => {
+    const initialValue = value ?? defaultValue ?? min;
+    return typeof initialValue === "number" ? [initialValue] : [...initialValue];
   }, [value, defaultValue, min]);
 
   return (
@@ -49,7 +44,7 @@ export function Slider({
             className="rounded-full bg-primary select-none data-[orientation=horizontal]:ms-0.5 data-[orientation=vertical]:mb-0.5"
             data-slot="slider-indicator"
           />
-          {Array.from({ length: _values.length }, (_, index) => (
+          {Array.from({ length: resolvedValues.length }, (_, index) => (
             <SliderPrimitive.Thumb
               className="block size-5 shrink-0 rounded-full border border-input bg-white shadow-xs/5 transition-[box-shadow,scale] outline-none select-none not-dark:bg-clip-padding before:absolute before:inset-0 before:rounded-full before:shadow-[0_1px_--theme(--color-black/4%)] has-focus-visible:ring-[3px] has-focus-visible:ring-ring/24 data-dragging:scale-120 sm:size-4 dark:border-background dark:has-focus-visible:ring-ring/48 [:has(*:focus-visible),[data-dragging]]:shadow-none"
               data-slot="slider-thumb"
@@ -64,10 +59,7 @@ export function Slider({
   );
 }
 
-export function SliderValue({
-  className,
-  ...props
-}: SliderPrimitive.Value.Props): React.ReactElement {
+export function SliderValue({ className, ...props }: SliderPrimitive.Value.Props): ReactElement {
   return (
     <SliderPrimitive.Value
       className={cn("flex justify-end text-sm", className)}

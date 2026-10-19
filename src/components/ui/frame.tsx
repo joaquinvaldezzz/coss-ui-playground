@@ -1,7 +1,7 @@
-import type * as React from "react";
+import type { ComponentProps, ReactElement } from "react";
 import { cn } from "@/lib/utils";
 
-export function Frame({ className, ...props }: React.ComponentProps<"div">): React.ReactElement {
+export function Frame({ className, ...props }: ComponentProps<"div">): ReactElement {
   return (
     <div
       className={cn(
@@ -15,10 +15,7 @@ export function Frame({ className, ...props }: React.ComponentProps<"div">): Rea
   );
 }
 
-export function FramePanel({
-  className,
-  ...props
-}: React.ComponentProps<"div">): React.ReactElement {
+export function FramePanel({ className, ...props }: ComponentProps<"div">): ReactElement {
   return (
     <div
       className={cn(
@@ -31,10 +28,7 @@ export function FramePanel({
   );
 }
 
-export function FrameHeader({
-  className,
-  ...props
-}: React.ComponentProps<"header">): React.ReactElement {
+export function FrameHeader({ className, ...props }: ComponentProps<"header">): ReactElement {
   return (
     <header
       className={cn("flex flex-col px-5 py-4", className)}
@@ -44,10 +38,7 @@ export function FrameHeader({
   );
 }
 
-export function FrameTitle({
-  className,
-  ...props
-}: React.ComponentProps<"div">): React.ReactElement {
+export function FrameTitle({ className, ...props }: ComponentProps<"div">): ReactElement {
   return (
     <div
       className={cn("text-sm font-semibold", className)}
@@ -57,10 +48,7 @@ export function FrameTitle({
   );
 }
 
-export function FrameDescription({
-  className,
-  ...props
-}: React.ComponentProps<"div">): React.ReactElement {
+export function FrameDescription({ className, ...props }: ComponentProps<"div">): ReactElement {
   return (
     <div
       className={cn("text-sm text-muted-foreground", className)}
@@ -70,10 +58,7 @@ export function FrameDescription({
   );
 }
 
-export function FrameFooter({
-  className,
-  ...props
-}: React.ComponentProps<"footer">): React.ReactElement {
+export function FrameFooter({ className, ...props }: ComponentProps<"footer">): ReactElement {
   return (
     <footer className={cn("px-5 py-4", className)} data-slot="frame-panel-footer" {...props} />
   );

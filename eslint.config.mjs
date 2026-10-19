@@ -48,7 +48,7 @@ const reactConfig = defineConfig([
       "react/function-component-definition": ["error", { namedComponents: "function-declaration" }],
       "react/jsx-sort-props": "off",
       "react/react-in-jsx-scope": "off",
-      "react/require-default-props": ["error", { functions: "defaultArguments" }],
+      "react/require-default-props": ["error", { functions: "ignore" }],
     },
   },
 ]);

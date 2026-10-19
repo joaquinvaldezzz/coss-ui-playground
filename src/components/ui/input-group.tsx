@@ -2,7 +2,6 @@
 
 import { cva } from "class-variance-authority";
 
-import type * as React from "react";
 import type { InputProps } from "@/components/ui/input";
 import type { TextareaProps } from "@/components/ui/textarea";
 import type { VariantProps } from "class-variance-authority";
@@ -54,6 +53,7 @@ export function InputGroupAddon({
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof inputGroupAddonVariants>): React.ReactElement {
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
       className={cn(inputGroupAddonVariants({ align }), className)}
       data-align={align}

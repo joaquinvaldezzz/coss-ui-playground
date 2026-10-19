@@ -25,7 +25,6 @@ import type {
 import type {
   ComposerEditorController,
   ComposerItemValue,
-  ComposerQuery,
   ComposerValue,
   UseComposerEditorOptions,
 } from "@/hooks/use-composer-editor";
@@ -82,51 +81,11 @@ function useComposerAnchorContext(): RefObject<HTMLFormElement | null> | undefin
 
 const emptyValue: ComposerValue = [];
 
-function ComposerEditorProvider({
-  value: controlledValue,
-  defaultValue = emptyValue,
-  onValueChange,
-  getSuggestionsAnnouncement,
-  children,
-  ...options
-}: ComposerEditorOptions & { children: ReactNode }): ReactElement {
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-  const editor = useComposerEditor({
-    ...options,
-    value: controlledValue ?? uncontrolledValue,
-    onValueChange: (nextValue, details) => {
-      if (controlledValue === undefined) setUncontrolledValue(nextValue);
-      onValueChange?.(nextValue, details);
-    },
-  });
-  const reset = () => editor.reset(defaultValue);
-  const resetRef = useRef(reset);
-  resetRef.current = reset;
-  useEffect(() => {
-    const form = editor.rootRef.current?.closest("form");
-    if (!form) return;
-    const onReset = (event: Event) => {
-      queueMicrotask(() => {
-        if (!event.defaultPrevented) resetRef.current();
-      });
-    };
-    form.addEventListener("reset", onReset);
-    return () => form.removeEventListener("reset", onReset);
-  });
-
-  return createElement(
-    ComposerEditorContext.Provider,
-    { value: { ...editor, reset } },
-    createElement(
-      ComposerSuggestions,
-      { ...editor.suggestions, getSuggestionsAnnouncement },
-      children,
-    ),
-  );
+interface RegisteredItem {
+  element: HTMLElement;
+  disabled: boolean;
 }
-
-type RegisteredItem = { element: HTMLElement; disabled: boolean };
-type SuggestionsContextValue = {
+interface SuggestionsContextValue {
   items: readonly ComposerItemValue[];
   listId: string;
   highlightedId: string | undefined;
@@ -135,7 +94,7 @@ type SuggestionsContextValue = {
   registerList: (element: HTMLElement | null) => void;
   highlightItem: (value: ComposerItemValue) => void;
   selectItem: (value: ComposerItemValue) => void;
-};
+}
 const ComposerSuggestionsContext: Context<SuggestionsContextValue | null> =
   createContext<SuggestionsContextValue | null>(null);
 function useComposerSuggestionsContext(): SuggestionsContextValue | null {
@@ -170,7 +129,7 @@ function ComposerSuggestions({
   const [registered, setRegistered] = useState<ReadonlyMap<string, RegisteredItem>>(
     () => new Map(),
   );
-  const [listElement, registerList] = useState<HTMLElement | null>(null);
+  const [listElement, setListElement] = useState<HTMLElement | null>(null);
   const registerItem = useCallback((id: string, item: RegisteredItem | null) => {
     setRegistered((previous) => {
       const next = new Map(previous);
@@ -186,7 +145,7 @@ function ComposerSuggestions({
     enabledItems.find((item) => item.id === highlightedValue)?.id ?? enabledItems[0]?.id;
 
   function selectItem(value: ComposerItemValue): void {
-    const item = enabledItems.find((item) => item.id === value.id);
+    const item = enabledItems.find((candidate) => candidate.id === value.id);
     if (!open || !item) return;
     onItemSelect(item);
     onOpenChange(false);
@@ -220,7 +179,7 @@ function ComposerSuggestions({
     } else if (event.key === "Enter" && !event.shiftKey) {
       if (!enabledItems.length && submitOnEmptySuggestions) return;
       event.preventDefault();
-      const item = enabledItems.find((item) => item.id === highlightedId);
+      const item = enabledItems.find((candidate) => candidate.id === highlightedId);
       if (item) selectItem(item);
     }
   }
@@ -233,14 +192,14 @@ function ComposerSuggestions({
         listId,
         highlightedId,
         registerItem,
-        registerList,
+        registerList: setListElement,
         inputProps: {
           "aria-autocomplete": enabled ? "list" : undefined,
           "aria-haspopup": enabled ? "listbox" : undefined,
-          "aria-controls": open ? listElement?.id || undefined : undefined,
+          "aria-controls": open ? (listElement?.id ?? undefined) : undefined,
           "aria-activedescendant":
             open && listElement && highlightedId
-              ? registered.get(highlightedId)?.element.id || undefined
+              ? (registered.get(highlightedId)?.element.id ?? undefined)
               : undefined,
           onKeyDown,
         },
@@ -278,6 +237,49 @@ function ComposerSuggestions({
           ? getSuggestionsAnnouncement(enabledItems.length)
           : "",
       ),
+    ),
+  );
+}
+
+function ComposerEditorProvider({
+  value: controlledValue,
+  defaultValue = emptyValue,
+  onValueChange,
+  getSuggestionsAnnouncement,
+  children,
+  ...options
+}: ComposerEditorOptions & { children: ReactNode }): ReactElement {
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const editor = useComposerEditor({
+    ...options,
+    value: controlledValue ?? uncontrolledValue,
+    onValueChange: (nextValue, details) => {
+      if (controlledValue === undefined) setUncontrolledValue(nextValue);
+      onValueChange?.(nextValue, details);
+    },
+  });
+  const reset = () => editor.reset(defaultValue);
+  const resetRef = useRef(reset);
+  useEffect(() => {
+    resetRef.current = reset;
+    const form = editor.rootRef.current?.closest("form");
+    if (!form) return undefined;
+    const onReset = (event: Event) => {
+      queueMicrotask(() => {
+        if (!event.defaultPrevented) resetRef.current();
+      });
+    };
+    form.addEventListener("reset", onReset);
+    return () => form.removeEventListener("reset", onReset);
+  });
+
+  return createElement(
+    ComposerEditorContext.Provider,
+    { value: { ...editor, reset } },
+    createElement(
+      ComposerSuggestions,
+      { ...editor.suggestions, getSuggestionsAnnouncement },
+      children,
     ),
   );
 }
@@ -343,18 +345,19 @@ function useComposerInputLayout() {
   const [input, setInput] = useState<HTMLElement | null>(null);
   const scheduleMeasureRef = useRef<(() => void) | null>(null);
   useLayoutEffect(() => {
-    for (const host of editor?.tokenHosts ?? []) {
+    (editor?.tokenHosts ?? []).forEach((host) => {
       const fallback = host.previousElementSibling;
-      if (fallback instanceof HTMLElement) fallback.hidden = true;
-    }
+      if (fallback instanceof HTMLElement) fallback.setAttribute("hidden", "");
+    });
   }, [editor?.tokenHosts]);
   useLayoutEffect(() => {
     const scroll = scrollRef.current;
-    if (!scroll || !input) return;
+    if (!scroll || !input) return undefined;
     const frame = scroll.closest<HTMLElement>('[data-slot="composer"]');
     const controls = new Set<HTMLElement>();
     let animationFrame: number | null = null;
 
+    let measure: () => void;
     function scheduleMeasure(): void {
       if (animationFrame !== null) return;
       animationFrame = requestAnimationFrame(() => {
@@ -365,7 +368,7 @@ function useComposerInputLayout() {
 
     const observer = new ResizeObserver(scheduleMeasure);
 
-    function measure(): void {
+    measure = () => {
       if (!scroll || !input) return;
       // Observe the groups themselves: their wrapper has no box in compact mode.
       // Reconcile here so conditional controls don't require a new observer.
@@ -374,31 +377,33 @@ function useComposerInputLayout() {
           ':scope > [data-slot="composer-actions"] > [data-slot="composer-action-group"]',
         ),
       );
-      for (const control of controls) {
+      Array.from(controls).forEach((control) => {
         if (!nextControls.has(control)) {
           observer.unobserve(control);
           controls.delete(control);
         }
-      }
-      for (const control of nextControls) {
+      });
+      Array.from(nextControls).forEach((control) => {
         if (!controls.has(control)) {
           observer.observe(control);
           controls.add(control);
         }
-      }
+      });
       const style = getComputedStyle(input);
       const lineHeight =
         Number.parseFloat(style.lineHeight) || Number.parseFloat(style.fontSize) * 1.2;
       const padding = Number.parseFloat(style.paddingTop) + Number.parseFloat(style.paddingBottom);
-      for (const [property, value] of [
-        ["--composer-line-height", `${lineHeight}px`],
-        ["--composer-input-padding", `${padding}px`],
-      ] as const) {
-        if (scroll.style.getPropertyValue(property) !== value) {
-          scroll.style.setProperty(property, value);
+      (
+        [
+          ["--composer-line-height", `${lineHeight}px`],
+          ["--composer-input-padding", `${padding}px`],
+        ] as const
+      ).forEach(([property, cssValue]) => {
+        if (scroll.style.getPropertyValue(property) !== cssValue) {
+          scroll.style.setProperty(property, cssValue);
         }
-      }
-      if (!frame || frame.dataset.layout !== "adaptive" || !controls.size) {
+      });
+      if (frame?.dataset.layout !== "adaptive" || !controls.size) {
         frame?.removeAttribute("data-multiline");
         return;
       }
@@ -421,7 +426,7 @@ function useComposerInputLayout() {
         input.style.removeProperty("min-height");
       }
       frame.toggleAttribute("data-multiline", contentHeight > lineHeight * 1.5 + padding);
-    }
+    };
     scheduleMeasureRef.current = scheduleMeasure;
     measure();
     observer.observe(input);

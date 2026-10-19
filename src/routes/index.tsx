@@ -3,8 +3,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
+import type { SyntheticEvent } from "react";
+import type { BaseUIEvent } from "@base-ui/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -18,7 +21,7 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 function Home() {
-  const form = useForm({
+  const form = useForm<FormSchema>({
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -26,7 +29,7 @@ function Home() {
     resolver: zodResolver(formSchema),
   });
 
-  function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
+  function handleSubmit(event: BaseUIEvent<SyntheticEvent<HTMLFormElement>>) {
     event.preventDefault();
 
     form.handleSubmit((data: FormSchema) => {
@@ -48,7 +51,7 @@ function Home() {
         </CardHeader>
 
         <CardPanel>
-          <Form className="flex w-full flex-col gap-4" onSubmit={handleSubmit}>
+          <Form className="flex w-full flex-col gap-4" onSubmit={(event) => handleSubmit(event)}>
             <Controller
               name="firstName"
               control={form.control}
@@ -76,6 +79,8 @@ function Home() {
                 </Field>
               )}
             />
+
+            <Checkbox />
 
             <Button type="submit">Submit</Button>
           </Form>
