@@ -1,6 +1,6 @@
-# coss-ui-playground
+# tanstack-start-coss-ui
 
-A TanStack Start app using [COSS UI](https://coss.com/ui) components.
+A TanStack Start app using [coss ui](https://coss.com/ui) components.
 
 # Getting Started
 
