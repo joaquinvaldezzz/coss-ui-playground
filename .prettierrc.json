@@ -26,7 +26,7 @@
     "<TYPES>^[./]",
     "^[./]"
   ],
-  "tailwindAttributes": ["classDialog", "tw"],
+  "tailwindAttributes": [],
   "tailwindStylesheet": "src/styles.css",
   "tailwindFunctions": ["cn", "cva"]
 }
