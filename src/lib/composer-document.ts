@@ -53,7 +53,7 @@ type ActiveQuery = ComposerQuery & {
 function pushText(parts: ComposerPart[], text: string): void {
   if (!text) return;
   const previous = parts[parts.length - 1];
-  if (previous?.type === "text") previous.text += text;
+  if (previous.type === "text") previous.text += text;
   else parts.push({ type: "text", text });
 }
 
@@ -118,10 +118,10 @@ function equalValue(left: ComposerValue, right: ComposerValue): boolean {
     a.length === b.length &&
     a.every((part, index) => {
       const other = b[index];
-      if (part.type === "text") return other?.type === "text" && part.text === other.text;
+      if (part.type === "text") return other.type === "text" && part.text === other.text;
       return (
-        other?.type !== "text" &&
-        other?.type === part.type &&
+        other.type !== "text" &&
+        other.type === part.type &&
         other.id === part.id &&
         other.label === part.label &&
         other.trigger === part.trigger &&
