@@ -2,6 +2,8 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
+import { AnchoredToastProvider, ToastProvider } from "@/components/ui/toast";
+
 import appCss from "../styles.css?url";
 
 import "@calcom/cal-sans-ui/geo.css";
@@ -39,7 +41,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="relative min-w-80 bg-background text-foreground antialiased">
-        <div className="relative isolate flex min-h-svh flex-col">{children}</div>
+        <div className="relative isolate flex min-h-svh flex-col">
+          <ToastProvider>
+            <AnchoredToastProvider>{children}</AnchoredToastProvider>
+          </ToastProvider>
+        </div>
         <TanStackDevtools
           config={{
             position: "bottom-right",

@@ -8,6 +8,7 @@ import { Card, CardDescription, CardHeader, CardPanel, CardTitle } from "@/compo
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { toastManager } from "@/components/ui/toast";
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required." }).trim(),
@@ -29,7 +30,12 @@ function Home() {
     event.preventDefault();
 
     form.handleSubmit((data: FormSchema) => {
-      console.log("Form submitted:", data);
+      toastManager.add({
+        id: "success-toast",
+        title: `Hello, ${data.firstName} ${data.lastName}!`,
+        description: "This is a toast notification.",
+        type: "success",
+      });
     })(event);
   }
 
