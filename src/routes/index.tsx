@@ -92,6 +92,35 @@ export const Route = createFileRoute("/")({
       {
         title: "Home",
       },
+      {
+        name: "description",
+        content: "This is the home page of the application.",
+      },
+      {
+        property: "og:title",
+        content: "Home",
+      },
+      {
+        property: "og:description",
+        content: "This is the home page of the application.",
+      },
+      {
+        property: "og:url",
+        content: "/",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "Home",
+      },
+      {
+        name: "twitter:description",
+        content: "This is the home page of the application.",
+      },
+      {
+        name: "twitter:url",
+        content: "/",
+      },
     ],
   }),
 });
