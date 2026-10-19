@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { seo } from "@/lib/seo";
+
 function About() {
   return (
     <div className="p-8">
@@ -10,40 +12,8 @@ function About() {
 
 export const Route = createFileRoute("/about")({
   component: About,
-  head: () => ({
-    meta: [
-      {
-        title: "About",
-      },
-      {
-        name: "description",
-        content: "This is the about page of the application.",
-      },
-      {
-        property: "og:title",
-        content: "About",
-      },
-      {
-        property: "og:description",
-        content: "This is the about page of the application.",
-      },
-      {
-        property: "og:url",
-        content: "/",
-      },
-      { name: "twitter:card", content: "summary_large_image" },
-      {
-        name: "twitter:title",
-        content: "About",
-      },
-      {
-        name: "twitter:description",
-        content: "This is the about page of the application.",
-      },
-      {
-        name: "twitter:url",
-        content: "/",
-      },
-    ],
+  head: seo({
+    title: "About",
+    description: "This is the about page of the application.",
   }),
 });

@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import type { SyntheticEvent } from "react";
 import type { BaseUIEvent } from "@base-ui/react";
+import { seo } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardPanel, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -92,40 +93,9 @@ function Home() {
 
 export const Route = createFileRoute("/")({
   component: Home,
-  head: () => ({
-    meta: [
-      {
-        title: "Home",
-      },
-      {
-        name: "description",
-        content: "This is the home page of the application.",
-      },
-      {
-        property: "og:title",
-        content: "Home",
-      },
-      {
-        property: "og:description",
-        content: "This is the home page of the application.",
-      },
-      {
-        property: "og:url",
-        content: "/",
-      },
-      { name: "twitter:card", content: "summary_large_image" },
-      {
-        name: "twitter:title",
-        content: "Home",
-      },
-      {
-        name: "twitter:description",
-        content: "This is the home page of the application.",
-      },
-      {
-        name: "twitter:url",
-        content: "/",
-      },
-    ],
+  head: seo({
+    title: "Home",
+    description: "This is the home page of the application.",
+    path: "/",
   }),
 });
