@@ -35,7 +35,7 @@
         "@types/react": "^19.2.0",
         "@types/react-dom": "^19.2.0",
         "@vitejs/plugin-react": "^6.0.1",
-        "eslint": "^9.20.0",
+        "eslint": "^9.39.5",
         "prettier": "^3.9.10",
         "prettier-plugin-jsdoc": "^1.8.1",
         "prettier-plugin-tailwindcss": "^0.8.1",
