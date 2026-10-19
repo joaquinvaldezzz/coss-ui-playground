@@ -1,6 +1,7 @@
 *.local
 .DS_Store
 .env
+.eslintcache
 .nitro
 .output
 .tanstack
