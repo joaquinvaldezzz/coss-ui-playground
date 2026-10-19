@@ -1,6 +1,7 @@
 import path from "node:path";
 import { includeIgnoreFile } from "@eslint/compat";
 import js from "@eslint/js";
+import { plugin as shadcn } from "@shadcn/lint";
 import { configs, plugins, rules } from "eslint-config-airbnb-extended";
 import { rules as prettierConfigRules } from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
@@ -69,6 +70,23 @@ const typescriptConfig = defineConfig([
   },
 ]);
 
+const shadcnConfig = defineConfig([
+  {
+    name: "shadcn/config",
+    plugins: {
+      shadcn,
+    },
+    rules: {
+      // "shadcn/no-restyle": ["error", { allow: ["layout"] }],
+      "shadcn/no-raw-colors": "error",
+      // "shadcn/no-arbitrary-values": ["error", { allow: ["layout"] }],
+      // "shadcn/no-inline-styles": "error",
+      "shadcn/no-unknown-classes": "warn",
+      // "shadcn/require-static-classes": "error",
+    },
+  },
+]);
+
 const prettierConfig = defineConfig([
   // Prettier plugin
   {
@@ -96,6 +114,8 @@ export default defineConfig([
   ...reactConfig,
   // TypeScript config
   ...typescriptConfig,
+  // shadcn/lint config
+  ...shadcnConfig,
   // Prettier config
   ...prettierConfig,
 ]);
